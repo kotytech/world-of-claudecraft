@@ -236,8 +236,15 @@ function mergeStatic(anchor: THREE.Object3D, live: ReadonlySet<THREE.Object3D>):
   }
 }
 
-function buildTemplate(gltf: LoadedGltf): ShipTemplate {
+function buildTemplate(gltf: LoadedGltf, key: string): ShipTemplate {
   const root = gltf.scene.clone(true);
+  if (key === 'eastbrookFerry') {
+    // The shipped Wheel node's pivot is at its pedestal. Its rim faces the
+    // bow, placing the helmsman in front of it looking aft; turn the whole
+    // assembly so the helmsman stands aft and faces the bow. Do this before
+    // static merging, without changing the hull or its simulation layout.
+    root.getObjectByName('Wheel')?.rotateY(Math.PI);
+  }
   root.traverse((node) => {
     const mesh = node as THREE.Mesh;
     if (!mesh.isMesh) return;
@@ -337,7 +344,7 @@ function templateFor(key: string): ShipTemplate {
   if (!template) {
     const gltf = loaded.get(url);
     if (!gltf) throw new Error(`transport ship model was not preloaded: ${url}`);
-    template = buildTemplate(gltf);
+    template = buildTemplate(gltf, key);
     templates.set(tkey, template);
     loaded.delete(url);
     releaseGltf(url);
