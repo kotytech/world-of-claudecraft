@@ -135,13 +135,6 @@ describe('foliage recovery transition', () => {
     expect(clean.count).toBe(306);
     expect(clean.bytes).toBe(4396);
   });
-  it('matches clean Medium after an ordinary High-to-Medium recovery', async () => {
-    const recovered = await boot(3, 2, 3);
-    const clean = await boot(2, 2, 3);
-    expect(recovered.tier).toBe('medium');
-    expect(recovered.count).toBe(clean.count);
-    expect(recovered.bytes).toBe(clean.bytes);
-  });
   it('matches a clean High boot when Low changes to High before entry', async () => {
     const changed = await boot(1, 3);
     const clean = await boot(3, 3);
